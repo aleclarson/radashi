@@ -71,6 +71,7 @@ export * from './number/round.ts'
 export * from './number/sum.ts'
 export * from './number/toFloat.ts'
 export * from './number/toInt.ts'
+export * from './number/parseHumanDuration.ts'
 
 export * from './object/assign.ts'
 export * from './object/clone.ts'
