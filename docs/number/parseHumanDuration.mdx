@@ -1,0 +1,55 @@
+---
+title: parseHumanDuration
+description: Parses a human duration string into milliseconds
+---
+
+### Usage
+
+Parse a human duration string like "1 hour", "2 seconds" into milliseconds.
+If a number is passed instead of a duration string, it is returned directly assuming milliseconds.
+
+```ts
+import * as _ from 'radashi'
+
+_.parseHumanDuration("1 second") // => 1_000
+_.parseHumanDuration("1h") // => 3_600_000
+_.parseHumanDuration("1 hour") // => 3_600_000
+_.parseHumanDuration("1.5 hours") // => 5_400_000
+_.parseHumanDuration("-1h") // => -3_600_000
+_.parseHumanDuration(500) // => 500
+```
+
+### Custom units
+
+You can define custom units by passing a `units` object to the `defineHumanQuantityParser` function.
+
+```ts
+import * as _ from 'radashi'
+
+const distanceParser = _.defineHumanQuantityParser({
+  units: {
+    kilometer: 1_000,
+    mile: 1_852,
+    yard: 0.9144,
+    foot: 0.3048,
+    meter: 1,
+  },
+  short: {
+    km: 'kilometer',
+    mi: 'mile',
+    yd: 'yard',
+    ft: 'foot',
+    m: 'meter',
+  },
+})
+
+distanceParser("1 kilometer") // => 1_000
+distanceParser("1km") // => 1_000
+distanceParser("1 mile") // => 1_852
+distanceParser("1mi") // => 1_852
+distanceParser("1 yard") // => 0.9144
+distanceParser("1yd") // => 0.9144
+distanceParser("1 foot") // => 0.3048
+distanceParser("1ft") // => 0.3048
+distanceParser("1 meter") // => 1
+```
