@@ -4,8 +4,10 @@ The `####` headline should be short and descriptive of the new functionality. In
 
 ## New Functions
 
-####
+#### `parseHumanDuration` function
 
-## New Features
+https://github.com/radashi-org/radashi/pull/332
 
-####
+#### `defineHumanQuantityParser` function
+
+https://github.com/radashi-org/radashi/pull/332
