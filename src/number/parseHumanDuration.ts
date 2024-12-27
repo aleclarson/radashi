@@ -1,3 +1,5 @@
+import { isNumber } from 'radashi'
+
 export type HumanQuantity<
   Unit extends string,
   ShortUnit extends string = never,
@@ -21,49 +23,55 @@ export type HumanQuantityOptions<
  * Defines a parser for human quantity strings
  *
  * @see https://radashi.js.org/reference/number/parseHumanDuration
-  * @example
-  * ```ts
-  * const distanceParser = _.defineHumanQuantityParser({
-  *   units: {
-  *     kilometer: 1_000,
-  *     mile: 1_852,
-  *     yard: 0.9144,
-  *     foot: 0.3048,
-  *     meter: 1,
-  *   },
-  *   short: {
-  *     km: 'kilometer',
-  *     mi: 'mile',
-  *     yd: 'yard',
-  *     ft: 'foot',
-  *     m: 'meter',
-  *   },
-  * })
-  *
-  * distanceParser("1 kilometer") // => 1_000
-  * distanceParser("1 mile") // => 1_852
-  * distanceParser("1 yard") // => 0.9144
-  * distanceParser("1ft") // => 0.3048
-  * distanceParser("1 meter") // => 1
-  * ```
-  */
+ * @example
+ * ```ts
+ * const distanceParser = _.defineHumanQuantityParser({
+ *   units: {
+ *     kilometer: 1_000,
+ *     mile: 1_852,
+ *     yard: 0.9144,
+ *     foot: 0.3048,
+ *     meter: 1,
+ *   },
+ *   short: {
+ *     km: 'kilometer',
+ *     mi: 'mile',
+ *     yd: 'yard',
+ *     ft: 'foot',
+ *     m: 'meter',
+ *   },
+ * })
+ *
+ * distanceParser("1 kilometer") // => 1_000
+ * distanceParser("1 mile") // => 1_852
+ * distanceParser("1 yard") // => 0.9144
+ * distanceParser("1ft") // => 0.3048
+ * distanceParser("1 meter") // => 1
+ * ```
+ */
 export function defineHumanQuantityParser<
   Unit extends string,
   ShortUnit extends string = never,
 >({ units, short }: HumanQuantityOptions<Unit, ShortUnit>) {
-
   return (quantity: HumanQuantity<Unit, ShortUnit>): number => {
     const match = quantity.match(/^(-?\d+(?:\.\d+)?) ?(\w+)?s?$/)
-    if (!match) throw new Error(`Invalid quantity, cannot parse: ${quantity}`)
+    if (!match) {
+      throw new Error(`Invalid quantity, cannot parse: ${quantity}`)
+    }
 
     let unit = match[2] as Unit | ShortUnit
     unit = short && unit in short ? short[unit as ShortUnit] : (unit as Unit)
 
-    let count = Number.parseFloat(match[1])
-    if (Math.abs(count) > 1 && unit.endsWith('s'))
+    const count = Number.parseFloat(match[1])
+    if (Math.abs(count) > 1 && unit.endsWith('s')) {
       unit = unit.substring(0, unit.length - 1) as Unit
+    }
 
-    if (!units[unit]) throw new Error(`Invalid unit: ${unit}, makes sure it is one of: ${Object.keys(units).join(', ')}`)
+    if (!units[unit]) {
+      throw new Error(
+        `Invalid unit: ${unit}, makes sure it is one of: ${Object.keys(units).join(', ')}`,
+      )
+    }
 
     return count * units[unit]
   }
@@ -88,8 +96,12 @@ export type HumanDuration = HumanQuantity<
  * parseHumanDuration(500) // => 500
  * ```
  */
-export function parseHumanDuration(humanDuration: HumanDuration | number): number {
-  if (typeof humanDuration === 'number') return humanDuration
+export function parseHumanDuration(
+  humanDuration: HumanDuration | number,
+): number {
+  if (isNumber(humanDuration)) {
+    return humanDuration
+  }
 
   const parser = defineHumanQuantityParser({
     units: {

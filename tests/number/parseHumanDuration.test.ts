@@ -46,19 +46,21 @@ describe('parseHumanDuration', () => {
   })
 
   test('failures on invalid input', () => {
-    // @ts-expect-error
-    expect(() => _.parseHumanDuration('An invalid string')).toThrow(/Invalid quantity, cannot parse: An invalid string/)
-    // @ts-expect-error
-    expect(() => _.parseHumanDuration('abc weeks')).toThrow(/Invalid quantity, cannot parse: abc weeks/)
-    // @ts-expect-error
-    expect(() => _.parseHumanDuration('3 unknown')).toThrow(/Invalid unit: unknown, makes sure it is one of: week, day, hour, minute, second, millisecond/)
+    expect(() =>
+      _.parseHumanDuration('An invalid string' as _.HumanDuration),
+    ).toThrow(/Invalid quantity, cannot parse: An invalid string/)
+    expect(() => _.parseHumanDuration('abc weeks' as _.HumanDuration)).toThrow(
+      /Invalid quantity, cannot parse: abc weeks/,
+    )
+    expect(() => _.parseHumanDuration('3 unknown' as _.HumanDuration)).toThrow(
+      /Invalid unit: unknown, makes sure it is one of: week, day, hour, minute, second, millisecond/,
+    )
   })
 
   test('is does nothing when parameter is alaready a number', () => {
     expect(_.parseHumanDuration(50)).toBe(50)
   })
 })
-
 
 describe('defineHumanQuantityParser', () => {
   const distanceParser = _.defineHumanQuantityParser({
@@ -79,14 +81,14 @@ describe('defineHumanQuantityParser', () => {
   })
 
   test('returned values', () => {
-    expect(distanceParser("1 kilometer")).toBe(1_000)
-    expect(distanceParser("1km")).toBe(1_000)
-    expect(distanceParser("1 mile")).toBe(1_852)
-    expect(distanceParser("1mi")).toBe(1_852)
-    expect(distanceParser("1 yard")).toBe(0.9144)
-    expect(distanceParser("1yd")).toBe(0.9144)
-    expect(distanceParser("1 foot")).toBe(0.3048)
-    expect(distanceParser("1ft")).toBe(0.3048)
-    expect(distanceParser("1 meter")).toBe(1)
+    expect(distanceParser('1 kilometer')).toBe(1_000)
+    expect(distanceParser('1km')).toBe(1_000)
+    expect(distanceParser('1 mile')).toBe(1_852)
+    expect(distanceParser('1mi')).toBe(1_852)
+    expect(distanceParser('1 yard')).toBe(0.9144)
+    expect(distanceParser('1yd')).toBe(0.9144)
+    expect(distanceParser('1 foot')).toBe(0.3048)
+    expect(distanceParser('1ft')).toBe(0.3048)
+    expect(distanceParser('1 meter')).toBe(1)
   })
 })
