@@ -1,24 +1,34 @@
-import { isNumber } from 'radashi'
-
+/**
+ * A human-readable quantity string.
+ */
 export type QuantityString<
   Unit extends string,
   ShortUnit extends string = never,
 > = `1 ${Unit}` | `${number} ${Unit}s` | `${number}${ShortUnit}`
 
-
-
-export class QuantityParser<Unit extends string, ShortUnit extends string = never> {
+/**
+ * Parses a quantity string into its numeric value.
+ *
+ * You can use `parseQuantity` instead for a light wrapper that
+ * doesn't require the `new` keyword.
+ *
+ * @version 12.4.0
+ */
+export class QuantityParser<
+  Unit extends string,
+  ShortUnit extends string = never,
+> {
   private units: Record<Unit, number>
-  private short?: Record<ShortUnit, Unit>
+  private short?: Record<ShortUnit, Unit> | undefined
 
-  constructor({ units, short }: QuantityParserOptions<Unit, ShortUnit>) {
+  constructor({ units, short }: QuantityParser.Options<Unit, ShortUnit>) {
     this.units = units
     this.short = short
   }
 
   /**
    * Parse a quantity string into its numeric value
-   * 
+   *
    * @throws {Error} If the quantity string is invalid or contains an unknown unit
    */
   parse(quantity: QuantityString<Unit, ShortUnit>): number {
@@ -28,9 +38,7 @@ export class QuantityParser<Unit extends string, ShortUnit extends string = neve
     }
 
     let unit = match[2] as Unit | ShortUnit
-    unit = this.short && unit in this.short 
-      ? this.short[unit as ShortUnit] 
-      : (unit as Unit)
+    unit = this.short?.[unit as ShortUnit] || (unit as Unit)
 
     const count = Number.parseFloat(match[1])
     if (Math.abs(count) > 1 && unit.endsWith('s')) {
@@ -45,40 +53,22 @@ export class QuantityParser<Unit extends string, ShortUnit extends string = neve
 
     return count * this.units[unit]
   }
-
-  static DurationParser = 
-
-  static createDurationParser(): QuantityParser.DurationParser {
-    return new QuantityParser.DurationParser()
-  }
 }
 
-export type HumanDuration = QuantityString
-  'week' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond',
-  'w' | 'd' | 'h' | 'm' | 's' | 'ms'
->
-
-/**
- * Parses a human duration string into milliseconds
- *
- * @see https://radashi.js.org/reference/number/parseHumanDuration
- * @example
- * ```ts
- * parseHumanDuration("1 second") // => 1_000
- * parseHumanDuration("1h") // => 3_600_000
- * parseHumanDuration("1 hour") // => 3_600_000
- * parseHumanDuration("1.5 hours") // => 5_400_000
- * parseHumanDuration("-1h") // => -3_600_000
- * parseHumanDuration(500) // => 500
- * ```
- */
-export function parseHumanDuration(
-  humanDuration: HumanDuration | number,
-): number {
-  if (isNumber(humanDuration)) {
-    return humanDuration
+export declare namespace QuantityParser {
+  /**
+   * The options for a `QuantityParser` instance.
+   */
+  export type Options<Unit extends string, ShortUnit extends string = never> = {
+    units: Record<Unit, number>
+    short?: Record<ShortUnit, Unit>
   }
 
-  const parser = QuantityParser.createDurationParser()
-  return parser.parse(humanDuration)
+  /**
+   * Convert a `QuantityParser` instance to a human-readable quantity string.
+   */
+  export type ToString<T extends QuantityParser<string, string>> =
+    T extends QuantityParser<infer Unit, infer ShortUnit>
+      ? QuantityString<Unit, ShortUnit>
+      : never
 }

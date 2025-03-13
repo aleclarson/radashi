@@ -1,0 +1,18 @@
+## Summary
+
+This PR implements the `toResult` function in the async group. It converts a `PromiseLike` to a `Promise<Result>`.
+
+## Related issue, if any:
+
+N/A
+
+## For any code change,
+
+- [x] Related documentation has been updated, if needed
+- [x] Related tests have been added or updated, if needed
+- [ ] Related benchmarks have been added or updated, if needed
+- [ ] Release notes in [next-minor.md](.github/next-minor.md) or [next-major.md](.github/next-major.md) have been added, if needed
+
+## Does this PR introduce a breaking change?
+
+No
